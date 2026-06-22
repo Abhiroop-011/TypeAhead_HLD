@@ -1,0 +1,101 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: typeahead_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: typeahead_db
+      MYSQL_USER: typeahead_user
+      MYSQL_PASSWORD: typeahead_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - typeahead_net
+  redis1:
+    image: redis:7-alpine
+    container_name: typeahead_redis1
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - typeahead_net
+  redis2:
+    image: redis:7-alpine
+    container_name: typeahead_redis2
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - typeahead_net
+  redis3:
+    image: redis:7-alpine
+    container_name: typeahead_redis3
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - typeahead_net
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: typeahead_backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      MYSQL_HOST: host.docker.internal
+      MYSQL_PORT: 3306
+      MYSQL_USER: typeahead_user
+      MYSQL_PASSWORD: "typeahead_pass"
+      MYSQL_DATABASE: typeahead_db
+      REDIS1_HOST: redis1
+      REDIS1_PORT: 6379
+      REDIS2_HOST: redis2
+      REDIS2_PORT: 6379
+      REDIS3_HOST: redis3
+      REDIS3_PORT: 6379
+      PORT: 3000
+    volumes:
+      - ./queries.csv:/app/queries.csv:ro
+    depends_on:
+      redis1:
+        condition: service_healthy
+      redis2:
+        condition: service_healthy
+      redis3:
+        condition: service_healthy
+    networks:
+      - typeahead_net
+networks:
+  typeahead_net:
+    driver: bridge
+volumes:
+  mysql_data:
+    driver: local

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search Typeahead System — HLD Project with distributed caching, batch writes, and trending decay">
+    <title>Search Typeahead — HLD System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header" id="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <h1 class="logo-text">TypeAhead<span class="logo-accent">HLD</span></h1>
+                </div>
+                <p class="header-subtitle">DISTRIBUTED SEARCH WITH CONSISTENT HASHING</p>
+            </div>
+        </header>
+        <main class="main-content">
+            <section class="search-section" id="search-section">
+                <div class="search-wrapper">
+                    <div class="search-box" id="search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input
+                            type="text"
+                            class="search-input"
+                            id="search-input"
+                            placeholder="Start typing to search..."
+                            autocomplete="off"
+                            spellcheck="false"
+                            aria-label="Search input"
+                            aria-autocomplete="list"
+                            aria-controls="suggestions-list"
+                        >
+                        <button class="search-button" id="search-button" aria-label="Submit search">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12,5 19,12 12,19"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="cache-badge-container" id="cache-badge-container" hidden>
+                        <span id="cache-badge-text"></span>
+                    </div>
+                    <div class="suggestions-container" id="suggestions-container" hidden>
+                        <ul class="suggestions-list" id="suggestions-list" role="listbox">
+                        </ul>
+                    </div>
+                </div>
+                <div class="search-result" id="search-result" hidden>
+                    <div class="result-card">
+                        <div class="result-icon">✓</div>
+                        <pre class="result-json" id="result-json"></pre>
+                    </div>
+                </div>
+            </section>
+            <section class="trending-section" id="trending-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+                            <polyline points="17,6 23,6 23,12"/>
+                        </svg>
+                        Trending Searches
+                    </h2>
+                    <span class="trending-refresh" id="trending-refresh" title="Refreshes every 30s">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <polyline points="23,4 23,10 17,10"/>
+                            <polyline points="1,20 1,14 7,14"/>
+                            <path d="M3.51,9a9,9,0,0,1,14.85-3.36L23,10M1,14l4.64,4.36A9,9,0,0,0,20.49,15"/>
+                        </svg>
+                        AUTO-REFRESH
+                    </span>
+                </div>
+                <div class="trending-grid" id="trending-grid">
+                    <div class="trending-loading" id="trending-loading">
+                        <div class="spinner"></div>
+                        <span>Loading trending searches...</span>
+                    </div>
+                </div>
+            </section>
+            <section class="info-bar" id="info-bar">
+                CACHE SHARDS: 3 Redis | BATCH FLUSH: 5s interval | DECAY CYCLE: 60s / 10% | CACHE TTL: 60s
+            </section>
+        </main>
+        <div class="error-toast" id="error-toast" hidden>
+            <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            <span class="error-message" id="error-message">Something went wrong</span>
+            <button class="error-close" id="error-close" aria-label="Close error">&times;</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

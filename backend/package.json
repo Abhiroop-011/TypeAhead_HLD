@@ -1,0 +1,24 @@
+{
+  "name": "typeahead-backend",
+  "version": "1.0.0",
+  "description": "Search Typeahead HLD System — Node.js/Express Backend with Distributed Redis Caching, Batch Writes, and Trending Decay",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seedData.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.5",
+    "ioredis": "^5.3.2",
+    "md5": "^2.3.0",
+    "csv-parser": "^3.0.0",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Abhiroop",
+  "license": "MIT"
+}
